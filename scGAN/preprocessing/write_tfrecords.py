@@ -89,6 +89,7 @@ def make_example(scg_line, barcode, count_no, genes_no,
 
         feat_map['cluster_int'] = tf.train.Feature(
             int64_list=tf.train.Int64List(value=[int(cluster)]))
+        #print(feat_map['cluster_int'])
 
     return tf.train.Example(features=tf.train.Features(feature=feat_map))
 
