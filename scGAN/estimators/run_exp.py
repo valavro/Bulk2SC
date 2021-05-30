@@ -39,6 +39,8 @@ def run_exp(exp_gpu, mode='train', cells_no=None, save_cells_path=None):
     avail_gpus = exp_gpu[1]
     gpu_id = avail_gpus.pop(0)
     os.environ["CUDA_VISIBLE_DEVICES"] = "{}".format(gpu_id)
+    from tensorflow.python.client import device_lib
+    
 
     # read the parameters
     exp_folder = exp_gpu[0]
@@ -46,7 +48,7 @@ def run_exp(exp_gpu, mode='train', cells_no=None, save_cells_path=None):
         hparams = json.load(fp)
 
     # find training and validation TF records
-    input_tfr = os.path.join(exp_folder, 'TF_records') #where records are saved
+    input_tfr = os.path.join(exp_folder, 'TF_records')
     train_files = [os.path.join(input_tfr, f)
                    for f in os.listdir(input_tfr) if "train" in f]
     valid_files = [os.path.join(input_tfr, f)
@@ -135,9 +137,10 @@ def run_exp(exp_gpu, mode='train', cells_no=None, save_cells_path=None):
                 summary_freq=hparams['training']['summary_freq'],
                 save_freq=hparams['training']['save_freq'])
         else:
+            print(save_cells_path)
             gan_model.generate_cells(
                 cells_no=cells_no,
                 checkpoint=log_dir,
-                save_path=save_cells_path)
+                save_path=save_cells_path) ### save_path added by Viktoria
 
     avail_gpus.append(gpu_id)
