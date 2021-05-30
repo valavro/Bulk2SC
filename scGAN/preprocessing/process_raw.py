@@ -54,6 +54,9 @@ class GeneMatrix:
 
         self.clusters_no = None
         self.clusters_ratios = None
+        
+        self.types_no = None
+        self.types_ratios = None
 
         self.cells_count = None
         self.genes_count = None
@@ -127,36 +130,67 @@ class GeneMatrix:
         -------
 
         """
+###################### Changed by Viktoria ################        
+        if self.cluster_res == 0:
+            if "cell_type" in self.sc_raw.obs_keys():
+                
+                cell_types = self.sc_raw.obs['cell_type']
+                cell_types = pd.Categorical(
+                    values=cell_types.astype('U'),
+                    categories=natsorted(map(str, np.unique(cell_types))),)
+                
+                self.sc_raw.obs['cluster'] = cell_types
+                #print(self.sc_raw.obs['cluster'])
 
-        if self.cluster_res is None:
-            if "cluster" in self.sc_raw.obs_keys():
-                print("clustering is already done,"
-                      " no clustering will be applied")
+                
+                print("Cell_type information is used,"
+                      " no clustering is applied")
+##############################################################
             else:
-                raise ValueError(' No clustering is applied, '
-                                 'please apply clustering')
+                raise ValueError(' No cell-type information is available, '
+                                 'please apply clustering') #### Text changed
+        
         else:
+################# Added by Viktoria #################
+            if "cluster" in self.sc_raw.obs_keys():
+                print("Reclustering data")
+                self.sc_raw.obs.drop('cluster', axis=1)
+########################################################
+                
             clustered = self.sc_raw.copy()
 
             # pre-processing
             sc.pp.recipe_zheng17(clustered)
             sc.tl.pca(clustered, n_comps=50)
-
             # clustering
             sc.pp.neighbors(clustered, n_pcs=50)
             sc.tl.louvain(clustered, resolution=self.cluster_res)
 
             # add clusters to the raw data
+#################Added by Viktoria ###################
+            barcodes_filt = clustered.obs.index.tolist()
+            self.sc_raw = self.sc_raw[barcodes_filt]
+#########################################################
             self.sc_raw.obs['cluster'] = clustered.obs['louvain']
+
 
         # adding clusters' ratios
         cells_per_cluster = Counter(self.sc_raw.obs['cluster'])
         clust_ratios = dict()
+        
         for key, value in cells_per_cluster.items():
             clust_ratios[key] = value / self.sc_raw.shape[0]
-
         self.clusters_ratios = clust_ratios
         self.clusters_no = len(cells_per_cluster)
+############## Added by Viktoria ###############        
+        if "cell_type" in self.sc_raw.obs_keys():
+            cells_per_type = Counter(self.sc_raw.obs['cell_type'])
+            types_ratios = dict()
+            for key, value in cells_per_type.items():
+                types_ratios[key] = value / self.sc_raw.shape[0]
+            self.types_ratios = types_ratios
+            self.types_no = len(cells_per_type)
+#################################################            
         print("Clustering of the raw data is done to %d clusters."
               % self.clusters_no)
 
@@ -251,10 +285,10 @@ class GeneMatrix:
                 categories=natsorted(unique_groups))
 
             for key in valid_cells_per_cluster:
-
+                
                 # all cells from clus idx
                 indices = self.sc_raw.obs[
-                    self.sc_raw.obs['cluster'] == str(key)].index
+                    self.sc_raw.obs['cluster'].astype(int) == int(key)].index
 
                 test_valid_indices = np.random.choice(
                     indices, valid_cells_per_cluster[key] +
