@@ -5,6 +5,7 @@ import tensorflow as tf
 import matplotlib
 matplotlib.use('Agg')
 import os
+import sys
 import time
 import matplotlib.pyplot as plt
 import numpy as np
@@ -171,6 +172,7 @@ class cscGAN:
                                                dtype=tf.float32,
                                                size=self.genes_no),
                        'cluster_int': tf.FixedLenFeature(1, tf.int64)}
+        #print(feature_map['cluster_int'])
 
         options = tf.python_io.TFRecordOptions(
             tf.python_io.TFRecordCompressionType.GZIP)
@@ -190,6 +192,7 @@ class cscGAN:
         dense = tf.sparse_tensor_to_dense(sparse)
 
         cluster = tf.squeeze(tf.to_int32(batched_features['cluster_int']))
+
 
         features = tf.reshape(dense, (self.batch_size, self.genes_no))
 
@@ -337,6 +340,7 @@ class cscGAN:
                     optimizer=self.optimizer)
 
         self.model_train = tf.group(self.incr_global_step, self.gen_train)
+        #self.model_train = tf.Print(self.model_train, [self.model_train], "self.model_train:")
         self.critic_train = tf.group(self.critic_train)
 
     def visualization(self):
@@ -467,6 +471,7 @@ class cscGAN:
 
                 model_fetches = {"train": self.model_train}
 
+
                 # Add the corresponding summary tensors to the fetches
                 if should(summary_freq):
                     model_fetches["summary"] = train_supervisor.summary_op
@@ -477,11 +482,13 @@ class cscGAN:
 
                 results = sess.run(model_fetches, feed_dict=train_feed_dict)
 
+
                 # Update the summaries for Tensorboard
                 if should(summary_freq):
                     print("Recording summary ...")
                     train_supervisor.summary_writer.add_summary(
                         results["summary"], step)
+
 
                 # Launch the validation steps
                 if should(validation_freq):
@@ -545,7 +552,7 @@ class cscGAN:
         return real_cells, real_clusters
 
     def generate_cells(self, cells_no, clusters_ratios=None,
-                       sess=None, save_path=None, checkpoint=None):
+                       sess=None, save_path=None, checkpoint=None, genes=None):
         """
         Method that generate cells from the current model.
 
@@ -732,5 +739,5 @@ class cscGAN:
         plt.legend(loc='lower left',
                    numpoints=1, ncol=3,
                    fontsize=8, bbox_to_anchor=(0, 0))
-        plt.savefig(tnse_logdir + '/step_' + str(train_step) + '.jpg')
+        plt.savefig(tnse_logdir + '/step_' + str(train_step) + '.png') #### Changed to '.png' due to problems with '.jpeg'
         plt.close()
