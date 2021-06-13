@@ -20,6 +20,19 @@ Folder structure:
 │   ├── preprocessing
 |   ...
 │   └── main.py
+├── cell_count_maker.R
+├── deconvolution.R
+├── generate.sh
+├── h5ad_to_mtx.py
 ├── helper_functions.R
-├── Master_deconvolution.R
-└── CIBERSORT.R
+├── make_reference.R
+├── mtx_to_rds.R
+└── result_plotter_cells.py
+
+
+## Usage
+### Training
+Instructions for training are identical to the original implementation of cscGAN:
+See: https://github.com/imsb-uke/scGAN
+
+
