@@ -35,6 +35,7 @@ Folder structure:
 ```
 Folders to create in advance:
  - Datasets
+ - Dataset folders within Datasets
  - Deconvolution folders within each dataset folder
  - Results
 
