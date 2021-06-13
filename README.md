@@ -33,6 +33,10 @@ Folder structure:
 ├── mtx_to_rds.R
 └── result_plotter_cells.py
 ```
+Folders to create in advance:
+-Datasets
+-Deconvolution folders within each dataset folder
+-Results
 
 ## Usage
 ### Training
@@ -63,6 +67,8 @@ You will find the generate `.h5ad` files at `.../Results/yyy-mm-dd-Chosen_folder
 ### Plotting cells simulated from pseudomixtures
 If you used the bulk pseudomixtures, you can use `result_plotter_cells.py` to plot UMAP and barplots collected in a PDF and heatmaps as images.
 
+![image](https://user-images.githubusercontent.com/54985154/121823963-f0b68e80-cca8-11eb-85c2-26ec69d57827.png)
+![image](https://user-images.githubusercontent.com/54985154/121823971-04fa8b80-cca9-11eb-8276-71b0489b2d73.png)
 
 
 
