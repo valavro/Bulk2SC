@@ -41,9 +41,27 @@ See: https://github.com/imsb-uke/scGAN
 
 ### Reference matrices for deconvolution
 When the training is done, the resulting `.h5ad` file is used to create the reference gene expression profile matrix C. First the `.h5ad` file must be converted to `.RDS` by first using the command
-'''
-python 
-'''
+```
+python h5ad_to_mtx.py --dataset "Dataset"
+```
+where "Dataset" is the corresponding folder name within the Datasets folder (e.g. PBMC, Baron, etc.). The same guidelines are used for the next step in
+```
+Rscript mtx_to_rds.R "Dataset"
+```
+Finally, all reference files are created using the next command. In case you want to create bulk pseudomixtures, you may use an integer as a second argument, to specify the number of mixtures to generate. These will be created from 1000 cells each.
+```
+Rscript make_reference.R "Dataset" 20
+```
+
+### Generation of simulated cells
+To simulate single-cell lookalike data, you can use the `generate.sh` script with the options `-i` as the location of the bulk sample file, `-d` as the name of the dataset (same way as in previous section), `-n` as the number of cells to simulate per sample and `-o` as the name to give to the folder, where the results should be saved (the current date will be automatically included in it)
+```
+bash generate.sh -i /path/to/bulk/samples/file -d "Dataset" -n 1000 -o Chosen_folder_name
+```
+You will find the generate `.h5ad` files at `.../Results/yyy-mm-dd-Chosen_folder_name`
+
+### Plotting cells simulated from pseudomixtures
+If you used the bulk pseudomixtures, you can use `result_plotter_cells.py` to plot UMAP and barplots collected in a PDF and heatmaps as images.
 
 
 
