@@ -47,7 +47,7 @@ See: https://github.com/imsb-uke/scGAN
 ### Reference matrices for deconvolution
 When the training is done, the resulting `.h5ad` file is used to create the reference gene expression profile matrix C. First the `.h5ad` file must be converted to `.RDS` by first using the command
 ```
-python h5ad_to_mtx.py --dataset "Dataset"
+python h5ad_to_mtx.py --input "Dataset"
 ```
 where "Dataset" is the corresponding folder name within the Datasets folder (e.g. PBMC, Baron, etc.). The same guidelines are used for the next step in
 ```
