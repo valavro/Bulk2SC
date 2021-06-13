@@ -34,9 +34,9 @@ Folder structure:
 └── result_plotter_cells.py
 ```
 Folders to create in advance:
--Datasets
--Deconvolution folders within each dataset folder
--Results
+ - Datasets
+ - Deconvolution folders within each dataset folder
+ - Results
 
 ## Usage
 ### Training
